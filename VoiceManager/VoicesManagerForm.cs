@@ -7,12 +7,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using VoicesManagementLibrary;
 
 namespace VoiceImporter {
     public partial class VoicesManagerForm : Form {
 
+        public List<Voice> voicesInstalled;
 
-        public VoicesManagerForm() {
+        public List<Voice> voicesAvailable;
+
+        
+
+        public VoicesManagerForm(List<Voice> voicesInstalled, List<Voice> voicesAvailable) {
+            this.voicesInstalled = voicesInstalled;
+            this.voicesAvailable = voicesAvailable;
             InitializeComponent();
         }
 

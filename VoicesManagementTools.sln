@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicesExporter", "VoiceExporter\VoicesExporter.csproj", "{57955797-4A64-4506-B313-415C9C76A07B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicesManager", "VoiceImporter\VoicesManager.csproj", "{E73156DE-623D-402E-A2DE-EB9202783F5F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicesManager", "VoiceManager\VoicesManager.csproj", "{E73156DE-623D-402E-A2DE-EB9202783F5F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicesManagementLibrary", "VoicesManagementLibrary\VoicesManagementLibrary.csproj", "{83A9AE3C-7351-49CF-AB4D-C2AA883806B0}"
 EndProject
