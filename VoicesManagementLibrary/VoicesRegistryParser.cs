@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,57 +17,44 @@ namespace VoicesManagementLibrary {
         /// </summary>
         /// <returns></returns>
         public static List<Voice> ParseRegistry() {
-            // Open registry keys
-            RegistryKey SAPIOneCoreTokens = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens");
-            RegistryKey SAPITokens = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Speech\Voices\Tokens");
-
-            List<Voice> fullList = new List<Voice>();
-            if (SAPIOneCoreTokens != null) {
-                foreach (string voiceToken in SAPIOneCoreTokens.GetSubKeyNames()) {
-                    fullList.Add(new Voice(SAPIOneCoreTokens.OpenSubKey(voiceToken)));
-                }
-            }
-            if (SAPITokens != null) {
-                foreach (string voiceToken in SAPITokens.GetSubKeyNames()) {
-                    fullList.Add(new Voice(SAPITokens.OpenSubKey(voiceToken)));
+           
+            List<Voice> sapiVoice = ParseRegistry(@"SOFTWARE\Microsoft\Speech\Voices\Tokens");
+            // append onecore voices
+            foreach (Voice oneCoreVoice in ParseRegistry(@"SOFTWARE\Microsoft\Speech_OneCore\Voices\Tokens")) {
+                if (!sapiVoice.Contains(oneCoreVoice)) {
+                    sapiVoice.Add(oneCoreVoice);
                 }
             }
 
-            List<Voice> filtered = new List<Voice>();
-            // filter voice list to delete voices copies
-            foreach (Voice item in fullList) {
-                if (!filtered.Contains(item)) {
-                    filtered.Add(item);
-                }
-            }
-
-            return filtered;
+            return sapiVoice;
         }
-
-        public static void ExportToJSON(List<Voice> voices, string jsonPath, bool replaceFile = false) {
-            // if json file already exists and replaceFile is false,
-            // - retrieve the previous list,
-            // - update the list
-            // - do the export
-
-            string finalList = "";
-
-
-            string temp = Path.GetTempFileName();
-            File.WriteAllText(temp, finalList);
-            File.Move(temp, jsonPath);
-        }
-
+        
         /// <summary>
-        /// Parse an export
+        /// Parse a voices path in registry
         /// </summary>
-        /// <param name="jsonPath"></param>
-        /// <param name="previousList"></param>
+        /// <param name="HKLMPath"></param>
         /// <returns></returns>
-        public static List<Voice> ParseExportFile(string jsonPath, List<Voice> previousList = null) {
-            List<Voice> result = previousList != null ? previousList  : new List<Voice>();
+        public static List<Voice> ParseRegistry(string HKLMPath) {
+            // Open registry keys
+            RegistryKey voiceTokens = Registry.LocalMachine.OpenSubKey(HKLMPath);
+
+            List<Voice> result = new List<Voice>();
+            
+            if (voiceTokens != null) {
+                foreach (string voiceToken in voiceTokens.GetSubKeyNames()) {
+                    result.Add(new Voice(voiceTokens.OpenSubKey(voiceToken)));
+                }
+            }
 
             return result;
+        }
+
+        public static string SerializeRegistry() {
+            return JsonConvert.SerializeObject(ParseRegistry());
+        }
+
+        public static List<Voice> DeserializeRegistry(string json) {
+            return JsonConvert.DeserializeObject<List<Voice>>(json);
         }
 
         public static void UpdateRegistry(List<Voice> voices, RegistryKey voicesTokensRootKey) {

@@ -24,17 +24,12 @@ namespace VoicesManagementLibrary {
             this.Name = Name;
         }
 
-        public string serialize() {
+        public string Serialize() {
             return JsonConvert.SerializeObject(this);
-            /*return "{" +
-                "\"name\":" + (this.Name != null ? ("\"" + this.Name.ToString().Replace("\\", "\\\\") + "\"") : "null") + ","+
-                "\"type\":" + "\"" + this.Type.ToString() + "\"" + "," +
-                "\"value\":" + "\"" + this.Value.ToString().Replace("\\", "\\\\") + "\"" +
-                "}";*/
         }
 
-        public static RegistryValue<object> unserialize(string json) {
-            // TODO
+        public static RegistryValue<object> Deserialize(string json) {
+            return (RegistryValue<object>)JsonConvert.DeserializeObject(json);
         }
 
 

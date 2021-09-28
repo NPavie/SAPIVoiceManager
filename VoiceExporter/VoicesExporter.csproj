@@ -53,6 +53,10 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine, Version=2.8.0.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.8.0\lib\net45\CommandLine.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -68,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\VoicesManagementLibrary\VoicesManagementLibrary.csproj">
@@ -78,6 +83,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>echo f | xcopy "$(TargetPath)" "C:\Users\nicol\Devs\VoiceManagementTools\VoiceImporter\Resources\$(TargetName)_$(PlatformName).exe" /Y</PostBuildEvent>
+    <PostBuildEvent>if exist "$(SolutionDir)VoiceManager\Exporters\$(PlatformName)" DEL /S /Q "$(SolutionDir)VoiceManager\Exporters\$(PlatformName)"
+echo r | xcopy "$(TargetDir)" "$(SolutionDir)VoiceManager\Exporters\$(PlatformName)" /Y</PostBuildEvent>
   </PropertyGroup>
 </Project>
