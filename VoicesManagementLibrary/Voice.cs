@@ -13,9 +13,16 @@ namespace VoicesManagementLibrary {
     /// Reflect a SAPI voice in the windows registry
     /// </summary>
     public class Voice : IEquatable<Voice> {
-        public string RegistryPath { get; set; }
 
-        public List<string> UnidentifiedSubKeys;
+        /// <summary>
+        /// Raw view of the voice record in registry
+        /// Used for saving the voice
+        /// </summary>
+        public RegistryFolder RegistryRawData { get; set; }
+
+        public string RegistryPath { get; }
+
+        public List<RegistryFolder> UnidentifiedSubKeys;
 
         public List<RegistryValue<string>> UnidentifiedValues;
 
@@ -24,7 +31,6 @@ namespace VoicesManagementLibrary {
             get => _Name?.Value;
             // voice name is the default value of the key
             set => _Name = new RegistryValue<string>(RegistryValueKind.String, value);
-            
         }
 
         private RegistryValue<string> _LCID;
@@ -121,7 +127,7 @@ namespace VoicesManagementLibrary {
 
             public List<string> UnidentifiedSubKeys;
 
-            public List<RegistryValue<string>> UnidentifiedValues;
+            public List<RegistryValue<object>> UnidentifiedValues;
 
             public VoiceAttributes () {}
 
@@ -145,11 +151,11 @@ namespace VoicesManagementLibrary {
                         case "SayAsSupport": this.SayAsSupport = (string)attributesKey.GetValue(ValueName); break;
                         default:
                             // just store the value in unidentified list
-                            if (UnidentifiedValues == null) UnidentifiedValues = new List<RegistryValue<string>>();
+                            if (UnidentifiedValues == null) UnidentifiedValues = new List<RegistryValue<object>>();
                             UnidentifiedValues.Add(
-                                new RegistryValue<string>(
+                                new RegistryValue<object>(
                                     attributesKey.GetValueKind(ValueName),
-                                    attributesKey.GetValue(ValueName).ToString(),
+                                    attributesKey.GetValue(ValueName),
                                     ValueName
                                 )
                             );
@@ -164,6 +170,19 @@ namespace VoicesManagementLibrary {
                 return JsonConvert.SerializeObject(this);
             }
 
+            public override string ToString() {
+                return " - Name:" + this.Name?.ToString() + "\r\n" +
+                    " - Age:" + this.Age?.ToString() + "\r\n" +
+                    " - Gender:" + this.Gender?.ToString() + "\r\n" +
+                    " - Language:" + this.Language?.ToString() + "\r\n" +
+                    " - SharedPronunciation:" + this.SharedPronunciation?.ToString() + "\r\n" +
+                    " - SpLexicon:" + this.SpLexicon?.ToString() + "\r\n" +
+                    " - Vendor:" + this.Vendor?.ToString() + "\r\n" +
+                    " - Version:" + this.Version?.ToString() + "\r\n" +
+                    " - DataVersion:" + this.DataVersion?.ToString() + "\r\n" +
+                    " - SayAsSupport:" + this.SayAsSupport?.ToString();
+            }
+            
         }
 
         public VoiceAttributes Attributes { get; set; }
@@ -173,7 +192,7 @@ namespace VoicesManagementLibrary {
         public Voice(RegistryKey voiceTokenKey) {
             
             if (voiceTokenKey == null) throw new Exception("Undefined voice token in the registry");
-            RegistryPath = voiceTokenKey.Name;
+            RegistryRawData = new RegistryFolder(voiceTokenKey);
             string[] values = voiceTokenKey.GetValueNames();
 
             foreach (string ValueName in values) {
@@ -209,8 +228,8 @@ namespace VoicesManagementLibrary {
                     if (subKeyName == "Attributes") {
                         this.Attributes = new VoiceAttributes(voiceTokenKey.OpenSubKey(subKeyName));
                     } else {
-                        if (UnidentifiedSubKeys == null) UnidentifiedSubKeys = new List<string>();
-                        UnidentifiedSubKeys.Add(subKeyName);
+                        if (UnidentifiedSubKeys == null) UnidentifiedSubKeys = new List<RegistryFolder>();
+                        UnidentifiedSubKeys.Add(new RegistryFolder(voiceTokenKey.OpenSubKey(subKeyName)));
                     }
                 }
             }
@@ -224,5 +243,20 @@ namespace VoicesManagementLibrary {
         public string Serialize() {
             return JsonConvert.SerializeObject(this);
         }
+
+        public override string ToString() {
+            return this.Name + "\r\n" +
+                "Registry path: " + this.RegistryPath?.ToString() + "\r\n" +
+                "LCID (language): " + this.LCID.ToString() + " (" + CultureInfo.GetCultureInfo(this.LCID).DisplayName + ")\r\n" +
+                "CLSID: " + this.CLSID?.ToString() + "\r\n" +
+                "LangDataPath: " + this.LangDataPath?.ToString() + "\r\n" +
+                "VoicePath: " + this.VoicePath?.ToString() + "\r\n" +
+                "Attributes:" + "\r\n" + this.Attributes.ToString();
+        }
+
+        public void SaveUnder(RegistryKey voicesTokensKey) {
+            this.RegistryRawData.InsertUnderRegistryKey(voicesTokensKey);
+        }
+
     }
 }

@@ -44,8 +44,18 @@ namespace VoiceImporter {
                 "export"+System.DateTime.Now.ToBinary().ToString() + "_x64.json"
                 );
 
+            string backup = Path.Combine
+                (Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                "_backups",
+                "backup_" + System.DateTime.Now.ToBinary().ToString() + "_" + (IntPtr.Size == 4 ? "x86" : "x64") + ".json"
+                );
+
+
             if (!Directory.Exists(Path.GetDirectoryName(defaultOutputExportx64))) {
                 Directory.CreateDirectory(Path.GetDirectoryName(defaultOutputExportx64));
+            }
+            if (!Directory.Exists(Path.GetDirectoryName(backup))) {
+                Directory.CreateDirectory(Path.GetDirectoryName(backup));
             }
             string debug = "";
             string error = "";
@@ -53,8 +63,7 @@ namespace VoiceImporter {
             Process exportingx86 = new Process();
             exportingx86.StartInfo.FileName = x86exporter;
             exportingx86.StartInfo.Arguments = "-o " + defaultOutputExportx86;
-            exportingx86.StartInfo.CreateNoWindow = false;
-            
+            exportingx86.StartInfo.CreateNoWindow = true;
             exportingx86.StartInfo.UseShellExecute = false;
             exportingx86.StartInfo.RedirectStandardOutput = true;
             exportingx86.StartInfo.RedirectStandardError = true;
@@ -65,19 +74,16 @@ namespace VoiceImporter {
                 error += args.Data;
             };
 
-
             if (exportingx86.Start()) {
                 exportingx86.BeginOutputReadLine();
                 exportingx86.BeginErrorReadLine();
-
                 exportingx86.WaitForExit();
             }
-            
 
             Process exportingx64 = new Process();
             exportingx64.StartInfo.FileName = x64exporter;
             exportingx64.StartInfo.Arguments = "-o " + defaultOutputExportx64;
-            exportingx64.StartInfo.CreateNoWindow = false;
+            exportingx64.StartInfo.CreateNoWindow = true;
             exportingx64.StartInfo.UseShellExecute = false;
             exportingx64.StartInfo.RedirectStandardOutput = true;
             exportingx64.StartInfo.RedirectStandardError = true;
@@ -93,13 +99,12 @@ namespace VoiceImporter {
                 exportingx64.WaitForExit();
             }
 
-
-            // current voice list installed
-            List<Voice> installed = VoicesRegistryParser.ParseRegistry(@"SOFTWARE\Microsoft\Speech\Voices\Tokens");
-
+            // current voice list installed on the SAPI default registry
+            List<Voice> installed = VoicesRegistryManagement.ParseVoices(VoicesRegistryManagement.VoiceTokensRoot.SAPI);
+            File.WriteAllText(backup, VoicesRegistryManagement.SerializeVoices(VoicesRegistryManagement.VoiceTokensRoot.SAPI));
             // exporter results
-            List<Voice> available = VoicesRegistryParser.DeserializeRegistry(File.ReadAllText(defaultOutputExportx86));
-            foreach (Voice item in VoicesRegistryParser.DeserializeRegistry(File.ReadAllText(defaultOutputExportx64))) {
+            List<Voice> available = VoicesRegistryManagement.DeserializeVoices(File.ReadAllText(defaultOutputExportx86));
+            foreach (Voice item in VoicesRegistryManagement.DeserializeVoices(File.ReadAllText(defaultOutputExportx64))) {
                 if (!available.Contains(item)) {
                     available.Add(item);
                 }

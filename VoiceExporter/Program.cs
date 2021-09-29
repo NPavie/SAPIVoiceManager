@@ -36,7 +36,7 @@ namespace VoiceExporter {
                 }
             });
 
-            string finalList = VoicesRegistryParser.SerializeRegistry();
+            string finalList = VoicesRegistryManagement.SerializeVoices();
             string temp = Path.GetTempFileName();
             File.WriteAllText(temp, finalList);
 

@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E73156DE-623D-402E-A2DE-EB9202783F5F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>VoiceImporter</RootNamespace>
-    <AssemblyName>VoiceImporter</AssemblyName>
+    <RootNamespace>VoiceManager</RootNamespace>
+    <AssemblyName>VoiceManager</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

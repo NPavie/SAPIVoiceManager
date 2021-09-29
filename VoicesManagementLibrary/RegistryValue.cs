@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
 namespace VoicesManagementLibrary {
-    
+
+    /// <summary>
+    /// Memory storage class for a value within a RegistryKey
+    /// </summary>
     public class RegistryValue<T> {
 
         public string Name { get; }
@@ -17,8 +15,13 @@ namespace VoicesManagementLibrary {
 
         public T Value { get; }
 
-
-        public RegistryValue(RegistryValueKind Type, T Value, string Name = null) {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <param name="Value"></param>
+        /// <param name="Name">Name of the value, or an empty string for default</param>
+        public RegistryValue(RegistryValueKind Type, T Value, string Name = "") {
             this.Type = Type;
             this.Value = Value;
             this.Name = Name;
