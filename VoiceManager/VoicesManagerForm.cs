@@ -23,10 +23,12 @@ namespace VoiceImporter {
 
             InitializeComponent();
 
+            this.Text = "SAPI voices manager - " + (IntPtr.Size * 8).ToString() + "bits registry";
         }
 
         
         private void VoiceManager_Load(object sender, EventArgs e) {
+            
             InstalledVoicesList.Items.Clear();
             this.AvailableVoicesCheckList.Items.Clear();
             foreach (Voice installed in this.InstalledVoices) {

@@ -161,7 +161,7 @@ namespace VoiceImporter {
             this.Controls.Add(this.InstallSelection);
             this.Controls.Add(this.AvailableVoicesCheckList);
             this.Name = "VoicesManagerForm";
-            this.Text = "SAPI voice registry manager";
+            this.Text = "SAPI voices registry manager";
             this.Load += new System.EventHandler(this.VoiceManager_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
