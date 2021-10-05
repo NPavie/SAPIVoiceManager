@@ -138,17 +138,17 @@ namespace VoicesManagementLibrary {
                 string[] values = attributesKey.GetValueNames();
 
                 foreach (string ValueName in values) {
-                    switch (ValueName) {
-                        case "Age": this.Age = (string)attributesKey.GetValue(ValueName); break;
-                        case "Gender": this.Gender = (string)attributesKey.GetValue(ValueName); break;
-                        case "Language": this.Language = (string)attributesKey.GetValue(ValueName); break;
-                        case "Name": this.Name = (string)attributesKey.GetValue(ValueName); break;
-                        case "SharedPronunciation": this.SharedPronunciation = (string)attributesKey.GetValue(ValueName); break;
-                        case "SpLexicon": this.SpLexicon = (string)attributesKey.GetValue(ValueName); break;
-                        case "Vendor": this.Vendor = (string)attributesKey.GetValue(ValueName); break;
-                        case "Version": this.Version = (string)attributesKey.GetValue(ValueName); break;
-                        case "DataVersion": this.DataVersion = (string)attributesKey.GetValue(ValueName); break;
-                        case "SayAsSupport": this.SayAsSupport = (string)attributesKey.GetValue(ValueName); break;
+                    switch (ValueName.ToLower()) {
+                        case "age": this.Age = (string)attributesKey.GetValue(ValueName); break;
+                        case "gender": this.Gender = (string)attributesKey.GetValue(ValueName); break;
+                        case "language": this.Language = (string)attributesKey.GetValue(ValueName); break;
+                        case "name": this.Name = (string)attributesKey.GetValue(ValueName); break;
+                        case "sharedpronunciation": this.SharedPronunciation = (string)attributesKey.GetValue(ValueName); break;
+                        case "splexicon": this.SpLexicon = (string)attributesKey.GetValue(ValueName); break;
+                        case "vendor": this.Vendor = (string)attributesKey.GetValue(ValueName); break;
+                        case "version": this.Version = (string)attributesKey.GetValue(ValueName); break;
+                        case "dataversion": this.DataVersion = (string)attributesKey.GetValue(ValueName); break;
+                        case "sayassupport": this.SayAsSupport = (string)attributesKey.GetValue(ValueName); break;
                         default:
                             // just store the value in unidentified list
                             if (UnidentifiedValues == null) UnidentifiedValues = new List<RegistryValue<object>>();
@@ -196,12 +196,12 @@ namespace VoicesManagementLibrary {
             string[] values = voiceTokenKey.GetValueNames();
 
             foreach (string ValueName in values) {
-                switch (ValueName) {
+                switch (ValueName.ToLower()) { // Use lowercase comparison as some third party does not follow usual case
                     // Default key value is the voice name
                     case "": this.Name = (string)voiceTokenKey.GetValue(ValueName); break;
-                    case "CLSID": this.CLSID = (string)voiceTokenKey.GetValue(ValueName); break;
-                    case "LangDataPath": this.LangDataPath = (string)voiceTokenKey.GetValue(ValueName); break;
-                    case "VoicePath": this.VoicePath = (string)voiceTokenKey.GetValue(ValueName); break;
+                    case "clsid": this.CLSID = (string)voiceTokenKey.GetValue(ValueName); break;
+                    case "langdatapath": this.LangDataPath = (string)voiceTokenKey.GetValue(ValueName); break;
+                    case "voicepath": this.VoicePath = (string)voiceTokenKey.GetValue(ValueName); break;
                     default:
                         // special key : the language code is stored
                         // using hexa code as key name, and voice name as key value 
@@ -225,7 +225,7 @@ namespace VoicesManagementLibrary {
             string[] subkeys = voiceTokenKey.GetSubKeyNames();
             if (subkeys.Length > 0) {
                 foreach (string subKeyName in subkeys) {
-                    if (subKeyName == "Attributes") {
+                    if (subKeyName.ToLower() == "attributes") {  // Use lowercase comparison as some third party does not follow usual case
                         this.Attributes = new VoiceAttributes(voiceTokenKey.OpenSubKey(subKeyName));
                     } else {
                         if (UnidentifiedSubKeys == null) UnidentifiedSubKeys = new List<RegistryFolder>();
